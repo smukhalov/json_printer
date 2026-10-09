@@ -6,12 +6,6 @@
 #include <sstream>
 #include <stack>
 #include <string>
-#include <variant>
-
-class ArrayContext;
-//class ObjectContext;
-class EmptyContext;
-using Context = std::variant<EmptyContext, ArrayContext>;
 
 void PrintJsonString(std::ostream& out, std::string_view str) {
     for(const char c : str){
@@ -33,19 +27,21 @@ private:
     std::ostream& ss_;
 };
 
+template <typename T>
 class  ArrayContext{
 public:
-    ArrayContext(std::ostream& ss, Context& context) : ss_(ss), context_(context), need_comma_(true)
+    ArrayContext(std::ostream& ss, T& context) : ss_(ss), context_(context), need_comma_(true)
     {}
 
     ArrayContext& BeginArray(){
         ss_ << '[';
-        Context context_child = *this;
-        ArrayContext ac(ss_, context_child);
-        return ac;
+//        Context context_child = *this;
+//        ArrayContext ac(ss_, context_child);
+//        return ac;
+        throw std::runtime_error("BeginArray");
     }
 
-    Context& EndArray(){
+    T& EndArray(){
         ss_ << ']';
         return context_;
     }
@@ -69,7 +65,7 @@ public:
 private:
     std::ostream& ss_;
     bool need_comma_;
-    Context& context_;
+    T& context_;
 };
 
 
@@ -77,8 +73,7 @@ private:
 //using ArrayContext = ArrayPrint<EmptyContext>;  // Замените это объявление на определение типа ArrayContext
 ArrayContext PrintJsonArray(std::ostream& out) {
     EmptyContext ec(out);
-    Context context = ec;
-    ArrayContext ac(out, context);
+    ArrayContext ac(out, ec);
     return ac;
 }
 
