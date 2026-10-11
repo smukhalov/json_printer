@@ -102,7 +102,7 @@ protected:
         if (!first_added_) {
             first_added_ = true;
         } else {
-            out_ << ',';
+            out_ << DelimeterChar; //',';
         }
     }
 
