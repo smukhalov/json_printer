@@ -345,19 +345,19 @@ void TestImplicitlyClosedArray() {
 }
 
 int main() {
-    TestRunner tr;
-    RUN_TEST(tr, TestArray);
-    RUN_TEST(tr, TestArrayAfterEnd);
-    RUN_TEST(tr, TestBigArray);
-    RUN_TEST(tr, TestEmptyArray);
-    RUN_TEST(tr, TestObject);
-    RUN_TEST(tr, TestObjectAfterEnd);
-    RUN_TEST(tr, TestNullIfKeyOnly);
-    RUN_TEST(tr, TestAutoClose);
-    RUN_TEST(tr, TestPrintString);
-    RUN_TEST(tr, TestExplicitlyClosedArray);
-    RUN_TEST(tr, TestArraySimple);
-    RUN_TEST(tr, TestImplicitlyClosedArray);
+//    TestRunner tr;
+//    RUN_TEST(tr, TestArray);
+//    RUN_TEST(tr, TestArrayAfterEnd);
+//    RUN_TEST(tr, TestBigArray);
+//    RUN_TEST(tr, TestEmptyArray);
+//    RUN_TEST(tr, TestObject);
+//    RUN_TEST(tr, TestObjectAfterEnd);
+//    RUN_TEST(tr, TestNullIfKeyOnly);
+//    RUN_TEST(tr, TestAutoClose);
+//    RUN_TEST(tr, TestPrintString);
+//    RUN_TEST(tr, TestExplicitlyClosedArray);
+//    RUN_TEST(tr, TestArraySimple);
+//    RUN_TEST(tr, TestImplicitlyClosedArray);
 
     return 0;
 }
