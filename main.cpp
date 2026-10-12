@@ -21,15 +21,41 @@ class Object;
 template <typename Parent>
 class Value {
 public:
-    Value(std::ostream& out) : out_(out) {}
-    Value(std::ostream &out, Parent *parent_context)
-            : out_(out), parent_(parent_context) {}
+    explicit Value(std::ostream& out) : out_(out) {}
+    Value(std::ostream &out, Parent *parent_context) : out_(out), parent_(parent_context)
+    {}
     ~Value() { if (!printed_) Null(); }
 
-    Parent &Number(int64_t value);
-    Parent &String(std::string_view value);
-    Parent &Boolean(bool value);
-    Parent &Null();
+    Parent& Number(int64_t value){
+        out_ << value;
+        printed_ = true;
+        return *parent_;
+    }
+    Parent& String(std::string_view value){
+        out_ << '\"';
+
+        for (auto ch : value) {
+            if (ch == '\"' || ch == '\\') {
+                out_ << '\\';
+            }
+            out_ << ch;
+        }
+
+        out_ << '\"';
+
+        printed_ = true;
+        return *parent_;
+    }
+    Parent& Boolean(bool value){
+        out_ << std::boolalpha << value;
+        printed_ = true;
+        return *parent_;
+    }
+    Parent& Null(){
+        out_ << "null";
+        printed_ = true;
+        return *parent_;
+    }
 
     Array<Parent> BeginArray() { printed_ = true; return {out_, this->parent_}; }
     Object<Parent> BeginObject() { printed_ = true; return {out_, this->parent_}; }
@@ -40,56 +66,18 @@ private:
     bool printed_{false};
 };
 
-template <typename Parent>
-Parent& Value<Parent>::Number(int64_t value) {
-    out_ << value;
-    printed_ = true;
-    return *parent_;
-}
-
-template <typename Parent>
-Parent& Value<Parent>::String(std::string_view value) {
-    out_ << '\"';
-
-    for (auto ch : value) {
-        if (ch == '\"' || ch == '\\') {
-            out_ << '\\';
-        }
-        out_ << ch;
-    }
-
-    out_ << '\"';
-
-    printed_ = true;
-    return *parent_;
-}
-
-template <typename Parent>
-Parent& Value<Parent>::Boolean(bool value) {
-    out_ << std::boolalpha << value;
-    printed_ = true;
-    return *parent_;
-}
-
-template <typename Parent>
-Parent& Value<Parent>::Null() {
-    out_ << "null";
-    printed_ = true;
-    return *parent_;
-}
-
 template <typename Parent, char BeginChar, char EndChar, char DelimeterChar>
 class Context {
 public:
-    Context(std::ostream& out) : out_(out) { Begin(); }
-    Context(std::ostream &out, Parent *context) : out_(out), parent_(context) { Begin(); }
+    explicit Context(std::ostream& out) : out_(out) { Begin(); }
+    Context(std::ostream &out, Parent* context) : out_(out), parent_(context) { Begin(); }
     ~Context() { End(); }
 
 protected:
     std::ostream& out_;
-    Parent *parent_{nullptr};
-    bool first_added_{false};
-    bool opened_{false};
+    Parent* parent_{ nullptr };
+    bool first_added_{ false };
+    bool opened_{ false };
 
     Value<Context> AddValue() { Delimeter(); return Value<Context>{out_, this}; }
 
@@ -359,6 +347,7 @@ void TestImplicitlyClosedArray() {
 int main() {
     TestRunner tr;
     RUN_TEST(tr, TestArray);
+    RUN_TEST(tr, TestArrayAfterEnd);
     RUN_TEST(tr, TestBigArray);
     RUN_TEST(tr, TestEmptyArray);
     RUN_TEST(tr, TestObject);
